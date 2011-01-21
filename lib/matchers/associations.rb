@@ -1,4 +1,4 @@
-require 'mongoid/associations'
+require 'mongoid/relations'
 
 module Mongoid
   module Matchers
