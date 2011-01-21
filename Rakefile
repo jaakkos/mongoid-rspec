@@ -10,10 +10,8 @@ begin
     gem.email = "evansagge@gmail.com"
     gem.homepage = "http://github.com/evansagge/mongoid-rspec"
     gem.authors = ["Evan Sagge"]
-    gem.add_dependency "mongoid", ">= 2.0.0.beta4"
-    gem.add_dependency "bson_ext", ">= 0.20.1"    
-    gem.add_dependency "rspec-rails", ">= 2.0.0.beta.7"      
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependency "mongoid", "~> 2.0.0"
+    gem.add_dependency "rspec", "~> 2"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -25,11 +23,11 @@ require 'rspec/core/rake_task'
 
 task :default => :spec
 
-Rspec::Core::RakeTask.new(:spec) do |spec|
+RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = "./spec/**/*_spec.rb"
 end
 
-Rspec::Core::RakeTask.new(:rcov) do |spec|
+RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.pattern = "./spec/**/*_spec.rb"
   spec.rcov = true
 end
