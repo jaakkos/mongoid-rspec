@@ -5,7 +5,7 @@ describe "Associations" do
     it { should reference_many :articles }
     it { should reference_many :comments }    
     it { should embed_one :profile }
-    it { should reference_many(:children).stored_as(:array) }
+    it { should references_and_referenced_in_many(:children) }
   end
   
   describe Profile do

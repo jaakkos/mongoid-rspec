@@ -8,7 +8,7 @@ class User
   referenced_in :site, :inverse_of => :users
   references_many :articles
   references_many :comments
-  references_many :children, :stored_as => :array, :class_name => "User"
+  references_and_referenced_in_many :children, :class_name => "User"
   
   embeds_one :profile
   

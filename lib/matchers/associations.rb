@@ -3,13 +3,13 @@ require 'mongoid/relations'
 module Mongoid
   module Matchers
     module Associations
-      HAS_MANY = defined?(Mongoid::Associations::HasManyRelated) ? Mongoid::Associations::HasManyRelated : Mongoid::Associations::ReferencesMany
-      HAS_MANY_AS_ARRAY = Mongoid::Associations::ReferencesManyAsArray
-      HAS_ONE = defined?(Mongoid::Associations::HasOneRelated) ? Mongoid::Associations::HasOneRelated : Mongoid::Associations::ReferencesOne
-      BELONGS_TO = defined?(Mongoid::Associations::BelongsToRelated) ? Mongoid::Associations::BelongsToRelated : Mongoid::Associations::ReferencedIn
-      EMBEDS_MANY = Mongoid::Associations::EmbedsMany
-      EMBEDS_ONE = Mongoid::Associations::EmbedsOne
-      EMBEDDED_IN = Mongoid::Associations::EmbeddedIn
+      HAS_MANY = Mongoid::Relations::Referenced::Many
+      HAS_MANY_TO_MANY = Mongoid::Relations::Referenced::ManyToMany
+      HAS_ONE = Mongoid::Relations::One
+      BELONGS_TO = Mongoid::Relations::Referenced::In
+      EMBEDS_MANY = Mongoid::Relations::Embedded::Many
+      EMBEDS_ONE = Mongoid::Relations::Embedded::One 
+      EMBEDDED_IN = Mongoid::Relations::Embedded::In
 
       
       class HaveAssociationMatcher
@@ -38,15 +38,9 @@ module Mongoid
           self
         end
         
-        def stored_as(store_as)
-          @association[:type] = HAS_MANY_AS_ARRAY if store_as == :array
-          self
-        end
-        
         def matches?(actual)
           @actual = actual.is_a?(Class) ? actual : actual.class
           association = @actual.associations[@association[:name]]
-          
           
           if association.nil?
             @negative_result_message = "no association named #{@association[:name]}"
@@ -55,7 +49,7 @@ module Mongoid
             @positive_result_message = "association named #{@association[:name]}"
           end
           
-          if association.association != @association[:type]
+          if association.relation != @association[:type]
             @negative_result_message = "#{@actual.inspect} #{type_description(association.association, false)} #{@association[:name]}"
             return false
           else
@@ -106,8 +100,8 @@ module Mongoid
             (passive ? 'reference' : 'references') << ' one'
           when HAS_MANY.name
             (passive ? 'reference' : 'references') << ' many'
-          when HAS_MANY_AS_ARRAY.name
-            (passive ? 'reference' : 'references') << ' many as array'
+          when HAS_MANY_TO_MANY.name
+            'references and referenced in many'
           when BELONGS_TO.name
             (passive ? 'be referenced in' : 'referenced in')
           else
@@ -142,6 +136,10 @@ module Mongoid
         HaveAssociationMatcher.new(association_name, BELONGS_TO)
       end     
       alias :be_referenced_in :belong_to_related 
+      
+      def references_and_referenced_in_many(association_name)
+        HaveAssociationMatcher.new(association_name, HAS_MANY_TO_MANY)
+      end
     end 
   end
 end
